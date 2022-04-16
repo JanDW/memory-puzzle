@@ -1,0 +1,21 @@
+#grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-size), 1fr);
+  max-width: 800px;
+  margin-inline: auto ;
+}
+
+#grid > * {
+  aspect-ratio: 1;
+  font-size: 100px;
+  /* border: 0; */
+}
+
+#grid > * > div {
+  opacity: 0;
+  transition: .5s opacity ease-in-out;
+}
+
+.visible {
+  opacity: 1 !important;
+}
