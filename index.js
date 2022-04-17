@@ -138,7 +138,7 @@ shuffledEmojis = shuffleArray(emojis);
 // Select the half of the gridsize emoji's
 uniqueBoardEmojis = shuffledEmojis.slice(0, numberOfTiles / 2);
 // Now duplicate them and shuffle again
-allBoardEmojis = shuffleArray(duplicateArrayElements(uniqueBoardEmojis));
+allBoardEmojis = shuffleArray(shuffleArray(shuffleArray(duplicateArrayElements(uniqueBoardEmojis))));
 
 setRootProperty('--grid-size', gridSize);
 
