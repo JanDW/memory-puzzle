@@ -22,7 +22,7 @@ main {
 
 #grid > button {
   width: calc((90vmin / var(--grid-size)));
-  font-size: 100px;
+  font-size: calc((50vmin / var(--grid-size))) ;
   padding: 0;
   border: 0;
   display: flex;
