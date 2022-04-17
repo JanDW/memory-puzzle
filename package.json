@@ -1,5 +1,31 @@
 {
+  "name": "memory-puzzle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "dependencies": {
-    "animate-css-grid": "^1.4.3"
-  }
+    "animate-css-grid": "^1.4.3",
+    "framesync": "^4.1.0",
+    "hey-listen": "^1.0.8",
+    "style-value-types": "^3.2.0",
+    "stylefire": "^7.0.3",
+    "lodash.throttle": "^4.1.1",
+    "popmotion": "^8.7.6",
+    "tslib": "^1.14.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JanDW/memory-puzzle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JanDW/memory-puzzle/issues"
+  },
+  "homepage": "https://github.com/JanDW/memory-puzzle#readme"
 }
