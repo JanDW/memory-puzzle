@@ -35,6 +35,7 @@ const emojis = [
 ];
 
 let secondClick = false;
+let clickDisabled = false;
 let shuffledEmojis;
 let uniqueBoardEmojis;
 let allBoardEmojis;
@@ -80,13 +81,17 @@ const generateGridInDOM = (grid, gridSize, emojis) => {
 function handleClick(e) {
   let button;
 
+  if (clickDisabled) {
+    return;
+  }
+
   if (e.target.matches('div')) {
     button = e.target.parentElement;
   } else {
     button = e.target;
   }
 
-  // Already visible? 
+  // Already visible?
   if (button.firstChild.classList.contains('visible')) {
     return;
   }
@@ -99,6 +104,7 @@ function handleClick(e) {
   }
   // First tile visible, checking 2nd tile
   if (secondClick) {
+    clickDisabled = true;
     button.firstChild.classList.add('visible');
     secondClick = !secondClick;
     // if emojis are not the same, hide them
@@ -106,7 +112,10 @@ function handleClick(e) {
       setTimeout(function () {
         firstTile.firstChild.classList.remove('visible');
         button.firstChild.classList.remove('visible');
+        clickDisabled = false;
       }, 1000);
+    } else {
+      clickDisabled = false;
     }
   }
 }
