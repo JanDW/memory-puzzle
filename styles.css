@@ -11,12 +11,18 @@ html, body, main {
 main {
   display: grid;
   place-content: center;
+  font-family: sans-serif;
+}
+
+#meta button {
+  font-size: 40px;
+  background-color: transparent;
+  border: 0;
 }
 
 #grid {
   display: grid;
   grid-template-columns: repeat(var(--grid-size), 1fr);
-  max-width: 90vmin;
   gap: 5px;
 }
 
@@ -35,6 +41,12 @@ main {
   opacity: 0;
   transition: .5s opacity ease-in-out;
   width: 100%;
+}
+
+#score {
+  font-size: 20px;
+  justify-self: end;
+  color: #888;
 }
 
 .visible {

@@ -3,6 +3,9 @@
 // import { wrapGrid } from 'animate-css-grid';
 
 const grid = document.querySelector('#grid');
+const triesOutput = document.querySelector('#tries');
+const matchedPairsOutput = document.querySelector('#matched');
+const matchedPairsTotalOutput = document.querySelector('#matchedTotal');
 const gridSize = 4;
 const numberOfTiles = gridSize ** 2;
 const emojis = [
@@ -34,6 +37,8 @@ const emojis = [
   '🇺🇸',
 ];
 
+let tries = 0;
+let matchedPairs = 0;
 let secondClick = false;
 let clickDisabled = false;
 let shuffledEmojis;
@@ -104,6 +109,7 @@ function handleClick(e) {
   }
   // First tile visible, checking 2nd tile
   if (secondClick) {
+    tries++;
     clickDisabled = true;
     button.firstChild.classList.add('visible');
     secondClick = !secondClick;
@@ -116,11 +122,16 @@ function handleClick(e) {
       }, 1000);
     } else {
       clickDisabled = false;
+      matchedPairs++;
     }
+    matchedPairsOutput.innerText = matchedPairs;
+    triesOutput.innerText = tries;
   }
 }
 
 // MAIN
+
+matchedPairsTotalOutput.innerText = gridSize ** 2 / 2;
 
 // Shuffle the emoji's
 shuffledEmojis = shuffleArray(emojis);
