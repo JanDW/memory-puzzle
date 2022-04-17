@@ -1,7 +1,5 @@
 // @ts-check
 'use strict';
-// import { wrapGrid } from 'animate-css-grid';
-
 const grid = document.querySelector('#grid');
 const triesOutput = document.querySelector('#tries');
 const matchedPairsOutput = document.querySelector('#matched');
@@ -123,6 +121,10 @@ function handleClick(e) {
     } else {
       clickDisabled = false;
       matchedPairs++;
+    }
+    if (matchedPairs === gridSize ** 2 / 2) {
+      startConfetti();
+      setTimeout(stopConfetti, 3000);
     }
     matchedPairsOutput.innerText = matchedPairs;
     triesOutput.innerText = tries;
