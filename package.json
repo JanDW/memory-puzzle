@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "animate-css-grid": "^1.4.3",
-    "parcel-bundler": "^1.12.5"
+    "animate-css-grid": "^1.4.3"
   }
 }
