@@ -31,7 +31,8 @@ class AudioController {
 
 const grid = document.querySelector('#grid');
 const triesOutput = document.querySelector('#tries');
-const audioControl = document.querySelector('#sound');
+const musicToggle = document.querySelector('#music');
+const soundToggle = document.querySelector('#sound');
 const matchedPairsOutput = document.querySelector('#matched');
 const matchedPairsTotalOutput = document.querySelector('#matchedTotal');
 const gridSize = 4;
@@ -208,10 +209,8 @@ function handleClick(e) {
 
 // MAIN
 
-
 //@DOING Not responding to click event
-audioControl.addEventListener('click', (e) => {
-  console.log(this);
+musicToggle.addEventListener('click', (e) => {
   if (e.target.textContent === '🔇') {
     audioController.startMusic();
     e.target.textContent = '🔊';
@@ -219,6 +218,10 @@ audioControl.addEventListener('click', (e) => {
     audioController.stopMusic();
     e.target.textContent = '🔇';
   }
+});
+
+soundToggle.addEventListener('click', (e) => {
+  e.target.textContent === '🔕' ? (e.target.textContent = '🔔') : (e.target.textContent = '🔕');
   audioController.soundEnabled = !audioController.soundEnabled;
 });
 
