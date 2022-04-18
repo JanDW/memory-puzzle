@@ -1,11 +1,42 @@
 // @ts-check
 'use strict';
+
+class AudioController {
+  constructor() {
+    this.bgMusic = new Audio('./sounds/background-game-melody-loop.mp3');
+    this.matchSound = new Audio('./sounds/match-sound.mp3');
+    this.completeSound = new Audio('./sounds/complete-sound.wav');
+    this.bgMusic.loop = true;
+    this.bgMusic.volume = 0.5;
+    this.soundEnabled = false;
+  }
+
+  startMusic() {
+    this.bgMusic.play();
+  }
+
+  stopMusic() {
+    this.bgMusic.pause();
+    this.bgMusic.currentTime = 0;
+  }
+
+  match() {
+    this.soundEnabled && this.matchSound.play();
+  }
+
+  complete() {
+    this.soundEnabled && this.completeSound.play();
+  }
+}
+
 const grid = document.querySelector('#grid');
 const triesOutput = document.querySelector('#tries');
+const audioControl = document.querySelector('#sound');
 const matchedPairsOutput = document.querySelector('#matched');
 const matchedPairsTotalOutput = document.querySelector('#matchedTotal');
 const gridSize = 4;
 const numberOfTiles = gridSize ** 2;
+const audioController = new AudioController();
 const emojis = [
   '💩',
   '🥳',
@@ -108,10 +139,12 @@ const generateGridInDOM = (grid, gridSize, emojis) => {
 function handleClick(e) {
   let button;
 
+  // Two tiles visible, block UI
   if (clickDisabled) {
     return;
   }
 
+  // Make sure we get the button and not the contained div
   if (e.target.matches('div')) {
     button = e.target.parentElement;
   } else {
@@ -145,10 +178,14 @@ function handleClick(e) {
     } else {
       clickDisabled = false;
       matchedPairs++;
+      audioController.match();
     }
     if (matchedPairs === gridSize ** 2 / 2) {
+      audioController.complete();
       startConfetti();
-      setTimeout(stopConfetti, 3000);
+      setTimeout(function () {
+        stopConfetti();
+      }, 3000);
     }
     matchedPairsOutput.innerText = matchedPairs;
     triesOutput.innerText = tries;
@@ -156,6 +193,20 @@ function handleClick(e) {
 }
 
 // MAIN
+
+
+//@DOING Not responding to click event
+audioControl.addEventListener('click', (e) => {
+  console.log(this);
+  if (e.target.textContent === '🔇') {
+    audioController.startMusic();
+    e.target.textContent = '🔊';
+  } else {
+    audioController.stopMusic();
+    e.target.textContent = '🔇';
+  }
+  audioController.soundEnabled = !audioController.soundEnabled;
+});
 
 matchedPairsTotalOutput.innerText = gridSize ** 2 / 2;
 

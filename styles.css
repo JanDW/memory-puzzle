@@ -14,10 +14,20 @@ main {
   font-family: sans-serif;
 }
 
+#status {
+  display: flex;
+  align-items: center;
+}
+
+
 #meta button {
   font-size: 40px;
   background-color: transparent;
   border: 0;
+}
+
+#score {
+  margin-inline-start: auto;
 }
 
 #grid {
@@ -35,6 +45,8 @@ main {
   align-items: center;
   justify-items: center;
   aspect-ratio: 1;
+  background-color: #f4f4f4;
+  /* outline: 2px solid hsl(351, 97%, 76%); */
 }
 
 #grid > * > div {

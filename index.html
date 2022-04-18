@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Memory puzzle</title>
-  <script src="./confetti-falling-animation/confetti.js"></script>
-  <script src="index.js" defer></script>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <main>
-    <div id="grid"></div>
-    <div id="meta" style="display: none;">
-      <button type="button" id="reload">↻</button>
-      <button type="button" id="settings">⚙</button>
-    </div>
-    <div id="score">
-      <span id="tries">0</span> tries &nbsp;&nbsp;&nbsp;
-      <span id="matched">0</span>/<span id="matchedTotal"></span> pairs matched
-    </div>
-  </main>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Memory puzzle</title>
+    <script src="./confetti-falling-animation/confetti.js"></script>
+    <script src="index.js" defer></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <div id="grid"></div>
+      <div id="status">
+        <div id="meta">
+          <button type="button" id="settings">⚙️</button>
+          <button type="button" id="sound">🔇</button>
+        </div>
+        <div id="score">
+          <span id="tries">0</span> tries &nbsp;&nbsp;&nbsp; <span id="matched">0</span>/<span id="matchedTotal"></span>
+          pairs matched
+        </div>
+      </div>
+    </main>
+  </body>
 </html>
