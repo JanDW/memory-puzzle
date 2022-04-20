@@ -3,7 +3,7 @@
 
 class AudioController {
   constructor() {
-    this.bgMusic = new Audio('./sounds/background-game-melody-loop.mp3');
+    this.bgMusic = new Audio('./sounds/background-music.mp3');
     this.matchSound = new Audio('./sounds/match-sound.mp3');
     this.completeSound = new Audio('./sounds/complete-sound.wav');
     this.bgMusic.loop = true;
