@@ -149,7 +149,7 @@ const emojis = [
 ];
 
 let firstCard, clickDisabled, secondClick;
-let tries,
+let tries = 0,
   matchedPairs = 0;
 
 function toggleAudioListener(audioType, toggleControl) {
@@ -218,7 +218,7 @@ const generateGridInDOM = (grid, gridSize, emojis) => {
   }
   // create card HTML
   for (let i = 0; i < gridSize ** 2; i++) {
-    gridHTML += `<button type="button" class="card"><div class="card__back"></div><div class="card__front"><span>${emojis[i]}</span></div></button>`;
+    gridHTML += `<button type="button" class="card"><div class="card__front"><span>${emojis[i]}</span></div><div class="card__back"></div></button>`;
   }
   // Insert in DOM
   grid.insertAdjacentHTML('beforeend', gridHTML);
@@ -251,7 +251,7 @@ function handleClick(e) {
     button.classList.add('visible');
     secondClick = false;
     // if emojis are not the same, hide them
-    if (firstCard.lastChild.innerText !== button.lastChild.innerText) {
+    if (firstCard.firstChild.innerText !== button.firstChild.innerText) {
       setTimeout(function () {
         firstCard.classList.remove('visible');
         button.classList.remove('visible');
@@ -259,6 +259,8 @@ function handleClick(e) {
       }, 1000);
     } else {
       clickDisabled = false;
+      button.classList.add('matched');
+      firstCard.classList.add('matched');
       matchedPairs++;
       audioController.match();
     }
