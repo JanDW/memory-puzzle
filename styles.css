@@ -16,7 +16,6 @@ main {
 }
 
 body {
-  /* background: #fff; */
   background-image: radial-gradient(
       hsl(255 100% 100% / 0.4),
       hsl(5 83% 86% /0.8)

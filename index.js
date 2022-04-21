@@ -15,12 +15,16 @@ class AudioController {
   get isSoundEnabled() {
     let localStorageVal = localStorage.isSoundEnabled;
     let castedBool;
+    
     if (localStorageVal) {
       castedBool = localStorageVal === 'true';
     }
-    // Set set _isSoundEnabled to the boolean, or to the default in constructor
-    // (which will save it to localStorage)
-    this.isSoundEnabled = castedBool || this._isSoundEnabled;
+    
+    typeof castedBool === 'undefined'
+      // Calling the setter to update localStorage
+      ? (this.isSoundEnabled = this._isSoundEnabled)
+      : (this.isSoundEnabled = castedBool);
+
     return this._isSoundEnabled;
   }
 
@@ -35,7 +39,12 @@ class AudioController {
     if (localStorageVal) {
       castedBool = localStorageVal === 'true';
     }
-    this.isMusicEnabled = castedBool || this._isMusicEnabled;
+    
+    typeof castedBool === 'undefined'
+      ? // Calling the setter to update localStorage
+        (this.isMusicEnabled = this._isMusicEnabled)
+      : (this.isMusicEnabled = castedBool);
+
     return this._isMusicEnabled;
   }
 
@@ -188,7 +197,7 @@ function toggleAudioIcon(currentTarget, isEnabled) {
 }
 
 /**
- * Shuffles array in place. ES6 version
+ * Fisher-Yates shuffle array in place.
  * @param {Array} a items An array containing the items.
  */
 
@@ -200,10 +209,20 @@ function shuffleArray(a) {
   return a;
 }
 
+
+/**
+ * Duplicates elements in array [1,a,true] => [1,1,a,a,true,true]
+ * @param  {Array} a
+ */
+
 function duplicateArrayElements(a) {
   return a.flatMap((i) => [i, i]);
 }
 
+/**
+ * @param  {string} property
+ * @param  {string} value
+ */
 const setRootProperty = (property, value) => {
   const root = document.documentElement;
   root.style.setProperty(property, value);
