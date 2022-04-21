@@ -79,7 +79,6 @@ const matchedPairsOutput = document.querySelector('#matched');
 const matchedPairsTotalOutput = document.querySelector('#matchedTotal');
 
 const gridSize = 4;
-const numberOfCards = gridSize ** 2;
 
 const emojis = [
   '💩',
@@ -149,11 +148,44 @@ const emojis = [
   '🛹',
 ];
 
+let firstCard, clickDisabled, secondClick;
 let tries,
   matchedPairs = 0;
-let clickDisabled,
-  secondClick = false;
-let shuffledEmojis, uniqueBoardEmojis, allBoardEmojis, firstCard;
+
+function toggleAudioListener(audioType, toggleControl) {
+  toggleControl.addEventListener('click', (e) => {
+    let isEnabled;
+
+    if (audioType === 'music') {
+      isEnabled = audioController.isMusicEnabled;
+      isEnabled === false
+        ? audioController.startMusic()
+        : audioController.stopMusic();
+      audioController.isMusicEnabled = !isEnabled;
+    }
+
+    if (audioType === 'sound') {
+      isEnabled = audioController.isSoundEnabled;
+      audioController.isSoundEnabled = !isEnabled;
+    }
+
+    isEnabled = !isEnabled;
+
+    toggleAudioIcon(e.currentTarget, isEnabled);
+  });
+}
+
+function toggleAudioIcon(currentTarget, isEnabled) {
+  if (isEnabled) {
+    currentTarget.children[0].removeAttribute('class');
+    currentTarget.children[1].setAttribute('class', 'display-none');
+  }
+
+  if (!isEnabled) {
+    currentTarget.children[0].setAttribute('class', 'display-none');
+    currentTarget.children[1].removeAttribute('class');
+  }
+}
 
 /**
  * Shuffles array in place. ES6 version
@@ -186,25 +218,19 @@ const generateGridInDOM = (grid, gridSize, emojis) => {
   }
   // create card HTML
   for (let i = 0; i < gridSize ** 2; i++) {
-    gridHTML += `<button type="button" id="card--${i}" class="card"><div class="card__back"></div><div class="card__front">${emojis[i]}</div></button>`;
+    gridHTML += `<button type="button" class="card"><div class="card__back"></div><div class="card__front"><span>${emojis[i]}</span></div></button>`;
   }
   // Insert in DOM
   grid.insertAdjacentHTML('beforeend', gridHTML);
 };
 
 function handleClick(e) {
-  let button;
+  let eventBubblePath = e.composedPath();
+  let button = eventBubblePath.find((el) => el.tagName === 'BUTTON');
 
   // Two cards visible, block UI
   if (clickDisabled) {
     return;
-  }
-
-  // Make sure we get the button and not the contained div
-  if (e.target.matches('div')) {
-    button = e.target.parentElement;
-  } else {
-    button = e.target;
   }
 
   // Already visible?
@@ -248,59 +274,24 @@ function handleClick(e) {
   }
 }
 
-function toggleAudioListener(audioType, toggleControl) {
-  toggleControl.addEventListener('click', (e) => {
-    let isEnabled;
-
-    if (audioType === 'music') {
-      isEnabled = audioController.isMusicEnabled;
-      isEnabled === false
-        ? audioController.startMusic()
-        : audioController.stopMusic();
-      audioController.isMusicEnabled = !isEnabled;
-    }
-
-    if (audioType === 'sound') {
-      isEnabled = audioController.isSoundEnabled;
-      audioController.isSoundEnabled = !isEnabled;
-    }
-
-    isEnabled = !isEnabled;
-
-    toggleAudioIcon(e.currentTarget, isEnabled);
-  });
-}
-
-
-function toggleAudioIcon(currentTarget, isEnabled) {
-  if (isEnabled) {
-    currentTarget.children[0].removeAttribute('class');
-    currentTarget.children[1].setAttribute('class', 'display-none');
-  }
-
-  if (!isEnabled) {
-    currentTarget.children[0].setAttribute('class', 'display-none');
-    currentTarget.children[1].removeAttribute('class');
-  }
+function generateBoard(domContainer, cardSymbols, gridSize) {
+  let shuffledSymbols, uniqueBoardSymbols, allBoardSymbols;
+  // Shuffle the symbols
+  setRootProperty('--grid-size', gridSize);
+  shuffledSymbols = shuffleArray(cardSymbols);
+  // Select the half of the gridsize emoji's
+  uniqueBoardSymbols = shuffledSymbols.slice(0, gridSize ** 2 / 2);
+  // Now duplicate them and shuffle again
+  allBoardSymbols = shuffleArray(duplicateArrayElements(uniqueBoardSymbols));
+  generateGridInDOM(domContainer, gridSize, allBoardSymbols);
 }
 
 // Main
 matchedPairsTotalOutput.innerText = gridSize ** 2 / 2;
-
-// Shuffle the emoji's
-shuffledEmojis = shuffleArray(emojis);
-
-// Select the half of the gridsize emoji's
-uniqueBoardEmojis = shuffledEmojis.slice(0, numberOfCards / 2);
-
-// Now duplicate them and shuffle again
-allBoardEmojis = shuffleArray(duplicateArrayElements(uniqueBoardEmojis));
-
-setRootProperty('--grid-size', gridSize);
-
-generateGridInDOM(grid, gridSize, allBoardEmojis);
+generateBoard(grid, emojis, gridSize);
 
 // See if music/sound are enabled, and set matching icons in toggle
+
 toggleAudioIcon(musicToggle, audioController.isMusicEnabled);
 toggleAudioIcon(soundToggle, audioController.isSoundEnabled);
 
