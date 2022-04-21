@@ -63,6 +63,9 @@ class AudioController {
   }
 
   match() {
+    // Won't play multiple times concurrently, so stop if playing
+    this.matchSound.pause();
+    this.matchSound.currentTime = 0;
     this.isSoundEnabled && this.matchSound.play();
   }
 
