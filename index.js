@@ -1,78 +1,7 @@
 // @ts-check
 'use strict';
 
-class AudioController {
-  constructor() {
-    this.bgMusic = new Audio('./sounds/background-music.mp3');
-    this.matchSound = new Audio('./sounds/match-sound.mp3');
-    this.completeSound = new Audio('./sounds/complete-sound.wav');
-    this.bgMusic.loop = true;
-    this.bgMusic.volume = 0.5;
-    this._isSoundEnabled = true;
-    this._isMusicEnabled = false;
-  }
-
-  get isSoundEnabled() {
-    let localStorageVal = localStorage.isSoundEnabled;
-    let castedBool;
-    
-    if (localStorageVal) {
-      castedBool = localStorageVal === 'true';
-    }
-    
-    typeof castedBool === 'undefined'
-      // Calling the setter to update localStorage
-      ? (this.isSoundEnabled = this._isSoundEnabled)
-      : (this.isSoundEnabled = castedBool);
-
-    return this._isSoundEnabled;
-  }
-
-  set isSoundEnabled(soundBool) {
-    this._isSoundEnabled = soundBool;
-    localStorage.setItem('isSoundEnabled', soundBool.toString());
-  }
-
-  get isMusicEnabled() {
-    let localStorageVal = localStorage.isMusicEnabled;
-    let castedBool;
-    if (localStorageVal) {
-      castedBool = localStorageVal === 'true';
-    }
-    
-    typeof castedBool === 'undefined'
-      ? // Calling the setter to update localStorage
-        (this.isMusicEnabled = this._isMusicEnabled)
-      : (this.isMusicEnabled = castedBool);
-
-    return this._isMusicEnabled;
-  }
-
-  set isMusicEnabled(musicBool) {
-    this._isMusicEnabled = musicBool;
-    localStorage.setItem('isMusicEnabled', musicBool.toString());
-  }
-
-  startMusic() {
-    this.bgMusic.play();
-  }
-
-  stopMusic() {
-    this.bgMusic.pause();
-    this.bgMusic.currentTime = 0;
-  }
-
-  match() {
-    // Won't play multiple times concurrently, so stop if playing
-    this.matchSound.pause();
-    this.matchSound.currentTime = 0;
-    this.isSoundEnabled && this.matchSound.play();
-  }
-
-  complete() {
-    this.isSoundEnabled && this.completeSound.play();
-  }
-}
+import { AudioController } from './AudioController.js';
 
 const audioController = new AudioController();
 
