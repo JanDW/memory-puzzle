@@ -92,7 +92,11 @@ const emojis = [
 let firstCard, clickDisabled, secondClick;
 let tries = 0,
   matchedPairs = 0;
-
+/**
+ * Event listener handling for audio controls: music and sound
+ * @param  {string} audioType 'music' or 'sound'
+ * @param  {object} toggleControl HTMLButtonElement as UI toggle
+ */
 function toggleAudioListener(audioType, toggleControl) {
   toggleControl.addEventListener('click', (e) => {
     let isEnabled;
@@ -213,10 +217,10 @@ function handleClick(e) {
       button.classList.add('matched');
       firstCard.classList.add('matched');
       matchedPairs++;
-      audioController.match();
+      audioController.playMatchSoundEffect();
     }
     if (matchedPairs === gridSize ** 2 / 2) {
-      audioController.complete();
+      audioController.playCompleteSoundEffect();
       startConfetti();
       setTimeout(function () {
         stopConfetti();

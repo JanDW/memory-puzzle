@@ -1,6 +1,10 @@
+// @TODO move dealing with localStorage into single reponsability methods
+/** @module  AudioController */
+// What was I thinking?
+
 export class AudioController {
   /**
-   * Create an AudioController
+   * @classdesc  Create an AudioController
    */
 
   constructor() {
@@ -17,7 +21,7 @@ export class AudioController {
    * Getter function checks if sound is enabled,
    * Checks localStorage, fallback to this_isSoundEnabled prop default
    * Updates localStorage as needed.
-   * @return {boolean} are sound effects audible?
+   * @returns {boolean} this._isSoundenabled – are sound effects audible?
    */
 
   get isSoundEnabled() {
@@ -29,7 +33,7 @@ export class AudioController {
     }
 
     typeof castedBool === 'undefined'
-      ? /** Calling the setter to update localStorage */
+      ? // Calling the setter to update localStorage
         (this.isSoundEnabled = this._isSoundEnabled)
       : (this.isSoundEnabled = castedBool);
 
@@ -51,7 +55,7 @@ export class AudioController {
    * Getter function checks if music playback is enabled,
    * Checks localStorage, fallback to this_isMusicEnabled prop default
    * Updates localStorage as needed.
-   * @return {boolean} is music playback enabled?
+   * @returns {boolean} is music playback enabled?
    */
 
   get isMusicEnabled() {
@@ -62,7 +66,7 @@ export class AudioController {
     }
 
     typeof castedBool === 'undefined'
-      ? /** Calling the setter to update localStorage */
+      ? // Calling the setter to update localStorage
         (this.isMusicEnabled = this._isMusicEnabled)
       : (this.isMusicEnabled = castedBool);
 
@@ -101,7 +105,7 @@ export class AudioController {
    * Function to invoke match sound effect
    */
 
-  match() {
+  playMatchSoundEffect() {
     // Won't play multiple times concurrently,
     // so stop in case still playing
     this.matchSound.pause();
@@ -113,7 +117,7 @@ export class AudioController {
    * Function to invoke completed game soundeffect
    */
 
-  complete() {
+  playCompleteSoundEffect() {
     this.isSoundEnabled && this.completeSound.play();
   }
 }
