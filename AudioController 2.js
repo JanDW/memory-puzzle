@@ -1,4 +1,4 @@
-// @TODO move dealing with localStorage into single responsibility methods
+// @TODO move dealing with localStorage into single reponsability methods
 // What was I thinking?
 
 /** @module  AudioController */
@@ -7,10 +7,12 @@ export class AudioController {
    * @classdesc  Create an AudioController
    */
 
+  /** @constructs */
+  
   constructor() {
-    this.bgMusic = new Audio('/sounds/background-music.mp3');
-    this.matchSound = new Audio('/sounds/match-sound.mp3');
-    this.completeSound = new Audio('/sounds/complete-sound.wav');
+    this.bgMusic = new Audio('./sounds/background-music.mp3');
+    this.matchSound = new Audio('./sounds/match-sound.mp3');
+    this.completeSound = new Audio('./sounds/complete-sound.wav');
     this.bgMusic.loop = true;
     this.bgMusic.volume = 0.5;
     this._isSoundEnabled = true;
@@ -21,7 +23,7 @@ export class AudioController {
    * Getter function checks if sound is enabled,
    * Checks localStorage, fallback to this_isSoundEnabled prop default
    * Updates localStorage as needed.
-   * @returns {boolean} this._isSoundEnabled – are sound effects audible?
+   * @return {boolean} are sound effects audible?
    */
 
   get isSoundEnabled() {
@@ -33,7 +35,7 @@ export class AudioController {
     }
 
     typeof castedBool === 'undefined'
-      ? // Calling the setter to update localStorage
+      ? /** Calling the setter to update localStorage */
         (this.isSoundEnabled = this._isSoundEnabled)
       : (this.isSoundEnabled = castedBool);
 
@@ -41,7 +43,7 @@ export class AudioController {
   }
 
   /**
-   * Setter function to enable/disable sound effects.
+   * Setter function to enable/disable soundeffects.
    * Updates corresponding property in localStorage
    * @param  {boolean} soundBool
    */
@@ -55,7 +57,7 @@ export class AudioController {
    * Getter function checks if music playback is enabled,
    * Checks localStorage, fallback to this_isMusicEnabled prop default
    * Updates localStorage as needed.
-   * @returns {boolean} is music playback enabled?
+   * @return {boolean} is music playback enabled?
    */
 
   get isMusicEnabled() {
@@ -66,7 +68,7 @@ export class AudioController {
     }
 
     typeof castedBool === 'undefined'
-      ? // Calling the setter to update localStorage
+      ? /** Calling the setter to update localStorage */
         (this.isMusicEnabled = this._isMusicEnabled)
       : (this.isMusicEnabled = castedBool);
 
@@ -105,7 +107,7 @@ export class AudioController {
    * Function to invoke match sound effect
    */
 
-  playMatchSoundEffect() {
+  match() {
     // Won't play multiple times concurrently,
     // so stop in case still playing
     this.matchSound.pause();
@@ -114,55 +116,10 @@ export class AudioController {
   }
 
   /**
-   * Function to invoke completed game sound effect
+   * Function to invoke completed game soundeffect
    */
 
-  playCompleteSoundEffect() {
+  complete() {
     this.isSoundEnabled && this.completeSound.play();
-  }
-
-  /**
-   * Event listener handling for audio controls: music and sound
-   * @param  {string} audioType 'music' or 'sound'
-   * @param  {object} toggleControl HTMLButtonElement as UI toggle
-   */
-
-  audioListenerToggle(audioType, toggleControl) {
-    toggleControl.addEventListener('click', (e) => {
-      let isEnabled;
-
-      if (audioType === 'music') {
-        isEnabled = this.isMusicEnabled;
-        isEnabled === false ? this.startMusic() : this.stopMusic();
-        this.isMusicEnabled = !isEnabled;
-      }
-
-      if (audioType === 'sound') {
-        isEnabled = this.isSoundEnabled;
-        this.isSoundEnabled = !isEnabled;
-      }
-
-      isEnabled = !isEnabled;
-
-      this.toggleAudioIcon(e.currentTarget, isEnabled);
-    });
-  }
-
-  /**
-   * Function to toggle on/off icons in present in DOM
-   * Called by toggleAudioListener()
-   * @param  {object} currentTarget The e.currentTarget value
-   * @param  {boolean} isEnabled To switch on / off
-   */
-
-  toggleAudioIcon(currentTarget, isEnabled) {
-    if (isEnabled) {
-      currentTarget.firstChild.removeAttribute('class');
-      currentTarget.lastChild.setAttribute('class', 'display-none');
-    }
-    if (!isEnabled) {
-      currentTarget.firstChild.setAttribute('class', 'display-none');
-      currentTarget.lastChild.removeAttribute('class');
-    }
   }
 }

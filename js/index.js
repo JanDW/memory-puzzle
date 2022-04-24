@@ -1,168 +1,72 @@
 // @ts-check
-'use strict';
 
 import { AudioController } from './AudioController.js';
+import { emojis } from './emojis.js';
+import * as _ from './utils.js';
 
-const audioController = new AudioController();
+class MemoryGame {
+  
+  /**
+   * Instantiates a new Memory game.
+   * @param  {number} gameDuration Maximum time to complete game in seconds.
+   * @param  {number} gridSize Dimension size for the card grid.
+   * @param  {object} soundToggle DOM element.
+   * @param  {object} musicToggle DOM element.
+   */
 
-const grid = document.querySelector('#grid');
-const triesOutput = document.querySelector('#tries');
+  constructor(gameDuration, gridSize, soundToggle, musicToggle) {
+    this.audioController = new AudioController();
+    this.grid = document.querySelector('#grid');
+    this.cardTotal = gridSize ** 2;
+    this.cardPairs =  this.cardTotal / 2;
+    this.timeTotal = gameDuration;
+    this.timeRemaining = gameDuration;
+    this.triesOutput = document.querySelector('#tries');
+    this.matchedPairsOutput = document.querySelector('#matched');
+    this.matchedPairsTotalOutput = document.querySelector('#matchedTotal');
+    this.busy = true;
+    this.soundToggle = soundToggle;
+    this.musicToggle = musicToggle;
+  }
+  /**
+   * Generate DOM for the cards
+   * @param  {object} domContainer
+   * @param  {array} emojis
+   * @param  {number} gridSize
+   */
+  
+  generateBoard(domContainer, emojis, gridSize) {
+    _.setRootProperty('--grid-size', this.gridSize);
+    emojisShuffled = _.shuffleArray(emojis);
+    emojisNeeded = emojisShuffled.slice(0, cardTotal / 2);
+    emojisPaired = _.duplicateArrayElements(uniqueBoardSymbols);
+    emojisPairedShuffled = _.shuffleArray(emojisPaired);
+    generateGridInDOM(domContainer, gridSize, emojisPairedShuffled);
+}
 
-const musicToggle = document.querySelector('#music');
-const musicOn = document.querySelector('#music__on');
-const musicOff = document.querySelector('#music__off');
+  startGame () {
+    this.timeRemaining = this.timeTotal;
+    this.audioController.audioListenerToggle('music', this.musicToggle);
+    this.audioController.audioListenerToggle('sound', this.soundToggle);
+  }
 
-const soundToggle = document.querySelector('#sound');
-const soundOn = document.querySelector('#sound__on');
-const soundOff = document.querySelector('#sound__off');
+  canFlipCard (card) {
+    return !this.busy && !this.matchedCards.includes(card) && card !== this.cardToCheck;
+  }
 
-const matchedPairsOutput = document.querySelector('#matched');
-const matchedPairsTotalOutput = document.querySelector('#matchedTotal');
-
-const gridSize = 4;
-
-const emojis = [
-  '💩',
-  '🥳',
-  '👻',
-  '🧑‍🎤',
-  '🧚‍♀️',
-  '🧞‍♀️',
-  '🧗‍♀️',
-  '🚀',
-  '🧨',
-  '🧸',
-  '🎁',
-  '🪆',
-  '🎏',
-  '🚽',
-  '🇧🇪',
-  '📺',
-  '💎',
-  '🔮',
-  '🎀',
-  '💝',
-  '💖',
-  '🦖',
-  '⚽️',
-  '🥏',
-  '⛸',
-  '🔑',
-  '🇺🇸',
-  '🍔',
-  '😶‍🌫️',
-  '🐒',
-  '🦍',
-  '🦧',
-  '💘',
-  '💣',
-  '👁️',
-  '👶🏼',
-  '👩🏻‍🦱',
-  '👩‍🎤',
-  '👩🏼‍🚀',
-  '👮🏻',
-  '👸🏾',
-  '🎅🏼',
-  '🧜🏿‍♀️',
-  '🐨',
-  '🦄',
-  '🐣',
-  '🐊',
-  '🦔',
-  '🥐',
-  '🍟',
-  '🧅',
-  '🤹🏽‍♀️',
-  '🐃',
-  '🦘',
-  '🐖',
-  '🐿️',
-  '🐞',
-  '🐜',
-  '🦕',
-  '👅',
-  '🎪',
-  '🏹',
-  '🎨',
-  '🛷',
-  '🛹',
-];
+  startCountdown() {
+    return setInterval(() => {
+        this.timeRemaining--;
+        this.timer.innerText = this.timeRemaining;
+        if(this.timeRemaining === 0)
+            this.gameOver();
+    }, 1000);
+  }
 
 let firstCard, clickDisabled, secondClick;
 let tries = 0,
   matchedPairs = 0;
-/**
- * Event listener handling for audio controls: music and sound
- * @param  {string} audioType 'music' or 'sound'
- * @param  {object} toggleControl HTMLButtonElement as UI toggle
- */
-function toggleAudioListener(audioType, toggleControl) {
-  toggleControl.addEventListener('click', (e) => {
-    let isEnabled;
 
-    if (audioType === 'music') {
-      isEnabled = audioController.isMusicEnabled;
-      isEnabled === false
-        ? audioController.startMusic()
-        : audioController.stopMusic();
-      audioController.isMusicEnabled = !isEnabled;
-    }
-
-    if (audioType === 'sound') {
-      isEnabled = audioController.isSoundEnabled;
-      audioController.isSoundEnabled = !isEnabled;
-    }
-
-    isEnabled = !isEnabled;
-
-    toggleAudioIcon(e.currentTarget, isEnabled);
-  });
-}
-
-function toggleAudioIcon(currentTarget, isEnabled) {
-  if (isEnabled) {
-    currentTarget.children[0].removeAttribute('class');
-    currentTarget.children[1].setAttribute('class', 'display-none');
-  }
-
-  if (!isEnabled) {
-    currentTarget.children[0].setAttribute('class', 'display-none');
-    currentTarget.children[1].removeAttribute('class');
-  }
-}
-
-/**
- * Fisher-Yates shuffle array in place.
- * @param {Array} a items An array containing the items.
- */
-
-function shuffleArray(a) {
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-
-/**
- * Duplicates elements in array [1,a,true] => [1,1,a,a,true,true]
- * @param  {Array} a
- */
-
-function duplicateArrayElements(a) {
-  return a.flatMap((i) => [i, i]);
-}
-
-/**
- * @param  {string} property
- * @param  {string} value
- */
-const setRootProperty = (property, value) => {
-  const root = document.documentElement;
-  root.style.setProperty(property, value);
-};
 
 // Generate grid 4×4
 const generateGridInDOM = (grid, gridSize, emojis) => {
@@ -231,33 +135,35 @@ function handleClick(e) {
   }
 }
 
-function generateBoard(domContainer, cardSymbols, gridSize) {
-  let shuffledSymbols, uniqueBoardSymbols, allBoardSymbols;
-  // Shuffle the symbols
-  setRootProperty('--grid-size', gridSize);
-  shuffledSymbols = shuffleArray(cardSymbols);
-  // Select the half of the gridsize emoji's
-  uniqueBoardSymbols = shuffledSymbols.slice(0, gridSize ** 2 / 2);
-  // Now duplicate them and shuffle again
-  allBoardSymbols = shuffleArray(duplicateArrayElements(uniqueBoardSymbols));
-  generateGridInDOM(domContainer, gridSize, allBoardSymbols);
-}
+
 
 // Main
-matchedPairsTotalOutput.innerText = gridSize ** 2 / 2;
+matchedPairsTotalOutput.innerText = this.cardPairs;
 generateBoard(grid, emojis, gridSize);
 
-// See if music/sound are enabled, and set matching icons in toggle
-
-toggleAudioIcon(musicToggle, audioController.isMusicEnabled);
-toggleAudioIcon(soundToggle, audioController.isSoundEnabled);
 
 // @TODO If music is enabled, require interaction, as it won't play otherwise
 if (audioController.isMusicEnabled) {
   audioController.startMusic();
 }
 
-toggleAudioListener('music', musicToggle);
-toggleAudioListener('sound', soundToggle);
 
 grid.addEventListener('click', handleClick);
+
+
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', ready());
+} else {
+  ready();
+};
+
+function ready() {
+  let audioEnabled, MusicEnabled;
+  const soundToggle = document.querySelector('#sound');
+  const musicToggle = document.querySelector('#music');
+  const game = new MemoryGame(100, 4, soundToggle, musicToggle);
+
+  // See if music/sound are enabled, and set matching icons in toggle
+  
+}
