@@ -74,6 +74,7 @@ main {
 .card__front,
 .card__back {
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   transition: transform 500ms ease-in-out;
   border-radius: 1rem;
   overflow: hidden;
