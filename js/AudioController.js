@@ -5,11 +5,11 @@ export class AudioController {
   constructor(soundToggle, musicToggle) {
     this.soundToggle = soundToggle;
     this.musicToggle = musicToggle;
-    this.music = new Audio('/sounds/background-music.mp3');
-    this.soundMatch = new Audio('/sounds/match-sound.mp3');
-    this.soundComplete = new Audio('/sounds/complete-sound.wav');
-    this.soundGameOver = new Audio('/sounds/game-over.wav');
-    this.soundFlip = new Audio('/sounds/flip.wav');
+    this.music = new Audio('sounds/background-music.mp3');
+    this.soundMatch = new Audio('sounds/match-sound.mp3');
+    this.soundComplete = new Audio('sounds/complete-sound.wav');
+    this.soundGameOver = new Audio('sounds/game-over.wav');
+    this.soundFlip = new Audio('sounds/flip.wav');
     this.music.loop = true;
     this.music.volume = 0.5;
     this._isSoundEnabled = true;
