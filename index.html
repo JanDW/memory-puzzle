@@ -14,7 +14,23 @@
   </head>
   <body>
     <main>
-      <div id="grid"></div>
+      <div class="overlay visible" id="start-game">
+        <div>🏄‍♀️ Shinkei-<br />suijaku 🏄‍♀️</div>
+        <div>Click to Play</div>
+      </div>
+      <div class="overlay" id="game-over">
+        <div>Time's up!<br />Game Over</div>
+        <div>🧠 ⤵️ 🕳️</div>
+        <div>Click to Restart</div>
+      </div>
+      <div class="overlay" id="success">
+        <div>Triumph!</div>
+        <div>You beat the clock, brainiac.</div>
+        <div>🏋️‍♂️ 🧠 🏋️‍♀️</div>
+        <div>Click to Restart</div>
+      </div>
+      <div class="overlay" id="settings"></div>
+      <div id="board"></div>
       <div id="status">
         <div id="meta">
           <button type="button" id="settings">
@@ -109,8 +125,9 @@
             ></span>
           </button>
         </div>
+        <div id="time">Time: <span id="time-remaining"></span></div>
         <div id="score">
-          <span id="tries">0</span> tries &nbsp;&nbsp;&nbsp;
+          <span id="clicks">0</span> tries &nbsp;&nbsp;&nbsp;
           <span id="matched">0</span>/<span id="matchedTotal"></span>
           pairs matched
         </div>

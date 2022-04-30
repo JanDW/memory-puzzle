@@ -5,165 +5,257 @@ import { emojis } from './emojis.js';
 import * as _ from './utils.js';
 
 class MemoryGame {
-  
   /**
    * Instantiates a new Memory game.
-   * @param  {number} gameDuration Maximum time to complete game in seconds.
-   * @param  {number} gridSize Dimension size for the card grid.
-   * @param  {object} soundToggle DOM element.
-   * @param  {object} musicToggle DOM element.
+   *
+   * @param {number} gameDuration Maximum time to complete game in seconds.
+   * @param {HTMLElement} board Game board container for the cards.
+   * @param {number} boardSize Dimension size for the card board.
+   * @param {HTMLButtonElement} soundToggle Button to toggle sound.
+   * @param {HTMLButtonElement} musicToggle Button to toggle music.
    */
 
-  constructor(gameDuration, gridSize, soundToggle, musicToggle) {
-    this.audioController = new AudioController();
-    this.grid = document.querySelector('#grid');
-    this.cardTotal = gridSize ** 2;
-    this.cardPairs =  this.cardTotal / 2;
-    this.timeTotal = gameDuration;
-    this.timeRemaining = gameDuration;
-    this.triesOutput = document.querySelector('#tries');
-    this.matchedPairsOutput = document.querySelector('#matched');
-    this.matchedPairsTotalOutput = document.querySelector('#matchedTotal');
-    this.busy = true;
-    this.soundToggle = soundToggle;
-    this.musicToggle = musicToggle;
+  constructor(gameDuration, board, boardSize, soundToggle, musicToggle) {
+    this.audioController = new AudioController(soundToggle, musicToggle);
+
+    // DOM elements
+    /** @type {HTMLElement} */
+    this.board = board;
+    /** @type {HTMLElement} */
+    this.clicksUI = document.querySelector('#clicks');
+    /** @type {HTMLElement} */
+    this.matchedUI = document.querySelector('#matched');
+    /** @type {HTMLElement} */
+    this.matchedTotalUI = document.querySelector('#matchedTotal');
+    /** @type {HTMLElement} */
+    this.timer = document.querySelector('#time-remaining');
+
+    this.boardSize = boardSize;
+    this.cardTotal = boardSize ** 2;
+    this.cardPairs = this.cardTotal / 2;
+    this.gameDuration = gameDuration;
   }
+
+  /** Start here */
+
+  startGame() {
+    this.totalClicks = 0;
+    this.timer.innerText = this.gameDuration.toString();
+    this.timeRemaining = this.gameDuration;
+    this.cardToCheck = null;
+    this.matchedCards = 0;
+    this.busy = true;
+    this.emptyBoardInDom();
+    this.audioController.initAudio();
+    this.generateBoard(this.board, emojis, this.boardSize);
+    this.cards = Array.from(document.querySelectorAll('.card'));
+    setTimeout(() => {
+      this.audioController.startMusic();
+      this.countdown = this.startCountdown();
+      this.busy = false;
+    }, 500);
+  }
+
   /**
    * Generate DOM for the cards
-   * @param  {object} domContainer
-   * @param  {array} emojis
-   * @param  {number} gridSize
+   *
+   * @param {HTMLElement} domContainer
+   * @param {array} emojis
+   * @param {number} boardSize
    */
-  
-  generateBoard(domContainer, emojis, gridSize) {
-    _.setRootProperty('--grid-size', this.gridSize);
-    emojisShuffled = _.shuffleArray(emojis);
-    emojisNeeded = emojisShuffled.slice(0, cardTotal / 2);
-    emojisPaired = _.duplicateArrayElements(uniqueBoardSymbols);
-    emojisPairedShuffled = _.shuffleArray(emojisPaired);
-    generateGridInDOM(domContainer, gridSize, emojisPairedShuffled);
-}
 
-  startGame () {
-    this.timeRemaining = this.timeTotal;
-    this.audioController.audioListenerToggle('music', this.musicToggle);
-    this.audioController.audioListenerToggle('sound', this.soundToggle);
+  generateBoard(domContainer, emojis, boardSize) {
+    _.setRootProperty('--board-size', boardSize.toString());
+    const emojisAllShuffled = _.shuffleArray(emojis);
+    const emojisUnique = emojisAllShuffled.slice(0, this.cardTotal / 2);
+    const emojisPaired = _.duplicateArrayElements(emojisUnique);
+    const emojisPairedShuffled = _.shuffleArray(emojisPaired);
+    this.generateBoardInDOM(domContainer, boardSize ** 2, emojisPairedShuffled);
   }
 
-  canFlipCard (card) {
-    return !this.busy && !this.matchedCards.includes(card) && card !== this.cardToCheck;
+  /** Remove any cards from the board */
+
+  emptyBoardInDom() {
+    while (this.board.firstChild) {
+      this.board.removeChild(this.board.firstChild);
+    }
   }
+
+  /**
+   * Get the symbol contained in the card
+   *
+   * @param {HTMLElement} card
+   */
+
+  getCardType(card) {
+    return card.firstChild.innerText;
+  }
+
+  /**
+   * Can this card be flipped?
+   *
+   * @param {HTMLElement} card
+   */
+
+  canFlipCard(card) {
+    return (
+      !this.busy &&
+      !card.classList.contains('visible') &&
+      card !== this.cardToCheck
+    );
+  }
+
+  /** Start countdown */
 
   startCountdown() {
     return setInterval(() => {
-        this.timeRemaining--;
-        this.timer.innerText = this.timeRemaining;
-        if(this.timeRemaining === 0)
-            this.gameOver();
+      this.timeRemaining--;
+      this.timer.innerText = this.timeRemaining.toString();
+      if (this.timeRemaining === 0) this.gameOver();
     }, 1000);
   }
 
-let firstCard, clickDisabled, secondClick;
-let tries = 0,
-  matchedPairs = 0;
+  /** Unable to complete game before countdown timer ran out */
 
-
-// Generate grid 4×4
-const generateGridInDOM = (grid, gridSize, emojis) => {
-  let gridHTML = '';
-  // Remove existing grid
-  while (grid.firstChild) {
-    grid.removeChild(grid.firstChild);
-  }
-  // create card HTML
-  for (let i = 0; i < gridSize ** 2; i++) {
-    gridHTML += `<button type="button" class="card"><div class="card__front"><span>${emojis[i]}</span></div><div class="card__back"></div></button>`;
-  }
-  // Insert in DOM
-  grid.insertAdjacentHTML('beforeend', gridHTML);
-};
-
-function handleClick(e) {
-  let eventBubblePath = e.composedPath();
-  let button = eventBubblePath.find((el) => el.tagName === 'BUTTON');
-
-  // Two cards visible, block UI
-  if (clickDisabled) {
-    return;
+  gameOver() {
+    clearInterval(this.countdown);
+    this.audioController.gameOver();
+    document.querySelector('#game-over').classList.add('visible');
   }
 
-  // Already visible?
-  if (button.classList.contains('visible')) {
-    return;
+  /** Completed game within countdown timer. Congratulations. */
+
+  success() {
+    clearInterval(this.countdown);
+    this.audioController.complete();
+    startConfetti();
+    setTimeout(function () {
+      stopConfetti();
+    }, 4000);
+    setTimeout(function () {
+      document.querySelector('#success').classList.add('visible');
+    }, 8000);
   }
-  // First card?
-  if (!secondClick) {
-    button.classList.add('visible');
-    secondClick = true;
-    firstCard = button;
-    return;
-  }
-  // First card visible, checking 2nd Card
-  if (secondClick) {
-    tries++;
-    clickDisabled = true;
-    button.classList.add('visible');
-    secondClick = false;
-    // if emojis are not the same, hide them
-    if (firstCard.firstChild.innerText !== button.firstChild.innerText) {
-      setTimeout(function () {
-        firstCard.classList.remove('visible');
-        button.classList.remove('visible');
-        clickDisabled = false;
-      }, 1000);
-    } else {
-      clickDisabled = false;
-      button.classList.add('matched');
-      firstCard.classList.add('matched');
-      matchedPairs++;
-      audioController.playMatchSoundEffect();
+
+  /**
+   * @param {HTMLElement} board
+   * @param {number} cardTotal
+   * @param {Array} emojis
+   */
+
+  generateBoardInDOM(board, cardTotal, emojis) {
+    let boardHTML = '';
+    for (let i = 0; i < cardTotal; i++) {
+      boardHTML += `<button type="button" class="card"><div class="card__front"><span>${emojis[i]}</span></div><div class="card__back"></div></button>`;
     }
-    if (matchedPairs === gridSize ** 2 / 2) {
-      audioController.playCompleteSoundEffect();
-      startConfetti();
-      setTimeout(function () {
-        stopConfetti();
-      }, 3000);
+    board.insertAdjacentHTML('beforeend', boardHTML);
+  }
+
+  /**
+   * Retrieve the button from the event bubbling up
+   *
+   * @param {Event} event
+   */
+
+  getClickedCardButton(event) {
+    let eventBubblePath = event.composedPath();
+    let button = eventBubblePath.find((el) => el.tagName === 'BUTTON');
+    return button;
+  }
+
+  /**
+   * Flip card and see if another card can be matched.
+   *
+   * @param {MouseEvent} e
+   */
+
+  flipCard(e) {
+    const card = this.getClickedCardButton(e);
+    if (this.canFlipCard(card)) {
+      this.audioController.flip();
+      this.totalClicks++;
+      this.clicksUI.innerText = this.totalClicks.toString();
+      card.classList.add('visible');
+
+      if (this.cardToCheck) {
+        this.checkForCardMatch(card);
+      } else {
+        this.cardToCheck = card;
+      }
     }
-    matchedPairsOutput.innerText = matchedPairs;
-    triesOutput.innerText = tries;
+  }
+
+  /**
+   * Do we have a match between the visible cards?
+   *
+   * @param {HTMLElement} card
+   */
+
+  checkForCardMatch(card) {
+    if (this.getCardType(card) === this.getCardType(this.cardToCheck))
+      this.cardMatch(card, this.cardToCheck);
+    else this.cardMismatch(card, this.cardToCheck);
+
+    this.cardToCheck = null;
+  }
+
+  /**
+   * We have a match, is the game completed?
+   *
+   * @param {HTMLElement} card1
+   * @param {HTMLElement} card2
+   */
+
+  cardMatch(card1, card2) {
+    this.matchedCards++;
+    card1.classList.add('matched');
+    card2.classList.add('matched');
+    this.matchedUI.innerText = this.matchedCards.toString();
+    this.audioController.match();
+    if (this.matchedCards === this.cardPairs) this.success();
+  }
+
+  /**
+   * Cards do not match, hide again.
+   *
+   * @param {HTMLElement} card1
+   * @param {HTMLElement} card2
+   */
+
+  cardMismatch(card1, card2) {
+    this.busy = true;
+    setTimeout(() => {
+      card1.classList.remove('visible');
+      card2.classList.remove('visible');
+      this.busy = false;
+    }, 1000);
   }
 }
 
-
-
-// Main
-matchedPairsTotalOutput.innerText = this.cardPairs;
-generateBoard(grid, emojis, gridSize);
-
-
-// @TODO If music is enabled, require interaction, as it won't play otherwise
-if (audioController.isMusicEnabled) {
-  audioController.startMusic();
-}
-
-
-grid.addEventListener('click', handleClick);
-
-
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', ready());
+if (document.readyState == 'loading') {
+  document.addEventListener('DOMContentLoaded', ready);
 } else {
   ready();
-};
+}
 
 function ready() {
-  let audioEnabled, MusicEnabled;
+  /** @type {HTMLButtonElement} */
+  const board = document.querySelector('#board');
+  /** @type {HTMLButtonElement} */
   const soundToggle = document.querySelector('#sound');
+  /** @type {HTMLButtonElement} */
   const musicToggle = document.querySelector('#music');
-  const game = new MemoryGame(100, 4, soundToggle, musicToggle);
+  const game = new MemoryGame(60, board, 4, soundToggle, musicToggle);
+  const overlays = Array.from(document.querySelectorAll('.overlay'));
 
-  // See if music/sound are enabled, and set matching icons in toggle
-  
+  board.addEventListener('click', (e) => {
+    game.flipCard(e);
+  });
+
+  overlays.forEach((overlay) => {
+    overlay.addEventListener('click', () => {
+      overlay.classList.remove('visible');
+      game.startGame();
+    });
+  });
 }

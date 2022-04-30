@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: utils.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,41 +17,53 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: utils.js</h1>
 
     
 
 
 
     
-
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
     <section>
-        <article><h1>Memory Puzzle</h1>
-<ul>
-<li>[ ] Jest unit testing</li>
-<li>[ ] JSDoc Comments</li>
-<li>[ ] Class for gameboard</li>
-</ul></article>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Fisher-Yates shuffle array in place.
+ * @param {Array} a items An array containing the items.
+ */
+
+function shuffleArray(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/**
+ * Duplicates elements in array [1,a,true] => [1,1,a,a,true,true]
+ * @param  {Array} a
+ */
+
+function duplicateArrayElements(a) {
+  return a.flatMap((i) => [i, i]);
+}
+
+/**
+ * set a CSS custom property on :root
+ * @param  {string} property
+ * @param  {string} value
+ * 
+ */
+
+const setRootProperty = (property, value) => {
+  const root = document.documentElement;
+  root.style.setProperty(property, value);
+};
+
+export { shuffleArray, duplicateArrayElements, setRootProperty };
+</code></pre>
+        </article>
     </section>
-
-
 
 
 
