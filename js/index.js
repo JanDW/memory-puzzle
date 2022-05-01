@@ -118,9 +118,13 @@ class MemoryGame {
   /** Unable to complete game before countdown timer ran out */
 
   gameOver() {
-    clearInterval(this.countdown);
+    this.busy = true;
     this.audioController.gameOver();
+    clearInterval(this.countdown);
     document.querySelector('#game-over').classList.add('visible');
+    setTimeout(() => {
+      this.busy = false;
+    }, 3000);
   }
 
   /** Completed game within countdown timer. Congratulations. */
@@ -254,8 +258,10 @@ function ready() {
 
   overlays.forEach((overlay) => {
     overlay.addEventListener('click', () => {
-      overlay.classList.remove('visible');
-      game.startGame();
+      if (!game.busy) {
+        overlay.classList.remove('visible');
+        game.startGame();
+      }
     });
   });
 }
