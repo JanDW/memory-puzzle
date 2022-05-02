@@ -149,8 +149,6 @@ export class AudioController {
    * @param {object} toggleControl HTMLButtonElement as UI toggle
    */
 
-  //@TODO Enabling music mid-game doesn't start playing it.
-
   audioListenerToggle(audioType, toggleControl) {
     toggleControl.addEventListener('click', (e) => {
       let isEnabled;

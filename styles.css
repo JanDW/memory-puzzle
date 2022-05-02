@@ -244,6 +244,11 @@ main {
   color: hsl(5 100% 60%);
 }
 
+.reveal-5s {
+  animation: reveal 0s 3s forwards;
+  visibility: hidden;
+}
+
 @keyframes wiggle {
   0%,
   100% {
@@ -288,4 +293,8 @@ main {
   to {
     font-size: 12vw;
   }
+}
+
+@keyframes reveal {
+  to   { visibility: visible; }
 }
