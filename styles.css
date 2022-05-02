@@ -135,6 +135,7 @@ main {
 
   background-color: #f9c3be;
   background-image: var(--card-bg);
+  background-size: 50%;
 }
 
 .card:not(.visible) .card__back:hover {
