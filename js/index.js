@@ -1,6 +1,7 @@
 // @ts-check
 
 import { AudioController } from './AudioController.js';
+import { startConfetti, stopConfetti } from './confetti.js';
 import { emojis } from './emojis.js';
 import * as _ from './utils.js';
 
