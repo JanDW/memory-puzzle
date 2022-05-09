@@ -1,6 +1,9 @@
+// @ts-check
+
 /**
  * Fisher-Yates shuffle array in place.
- * @param {Array} a items An array containing the items.
+ *
+ * @param {Array} a Items An array containing the items.
  */
 
 function shuffleArray(a) {
@@ -13,7 +16,8 @@ function shuffleArray(a) {
 
 /**
  * Duplicates elements in array [1,a,true] => [1,1,a,a,true,true]
- * @param  {Array} a
+ *
+ * @param {Array} a
  */
 
 function duplicateArrayElements(a) {
@@ -21,10 +25,10 @@ function duplicateArrayElements(a) {
 }
 
 /**
- * set a CSS custom property on :root
- * @param  {string} property
- * @param  {string} value
- * 
+ * Set a CSS custom property on :root
+ *
+ * @param {string} property
+ * @param {string} value
  */
 
 const setRootProperty = (property, value) => {

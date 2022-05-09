@@ -1,3 +1,5 @@
+// @ts-check
+
 /** @module AudioController */
 export class AudioController {
   /** @classdesc Create an AudioController */
