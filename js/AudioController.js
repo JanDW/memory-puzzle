@@ -92,7 +92,7 @@ export class AudioController {
    * attaches click handlers
    */
 
-  initAudio() {
+  init() {
     this.toggleAudioIcon(this.soundToggle, this.isSoundEnabled);
     this.toggleAudioIcon(this.musicToggle, this.isMusicEnabled);
     this.audioListenerToggle('sound', this.soundToggle);
@@ -175,18 +175,18 @@ export class AudioController {
   /**
    * Toggles on/off icons for audio buttons
    *
-   * @param {HTMLButtonElement} currentTarget The e.currentTarget value
+   * @param {HTMLButtonElement} button 
    * @param {boolean} isEnabled To switch on / off
    */
 
-  toggleAudioIcon(currentTarget, isEnabled) {
+  toggleAudioIcon(button, isEnabled) {
     if (isEnabled) {
-      currentTarget.children[0].removeAttribute('class');
-      currentTarget.children[1].setAttribute('class', 'display-none');
+      button.children[0].removeAttribute('class');
+      button.children[1].setAttribute('class', 'display-none');
     }
     if (!isEnabled) {
-      currentTarget.children[0].setAttribute('class', 'display-none');
-      currentTarget.children[1].removeAttribute('class');
+      button.children[0].setAttribute('class', 'display-none');
+      button.children[1].removeAttribute('class');
     }
   }
 }

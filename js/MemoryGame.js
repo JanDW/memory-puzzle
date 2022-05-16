@@ -47,7 +47,7 @@ export class MemoryGame {
     this.matchedCards = 0;
     this.busy = true;
     this.emptyBoardInDom();
-    this.audioController.initAudio();
+    this.audioController.init();
     this.generateBoard(this.board, emojis, this.boardSize);
     this.cards = Array.from(document.querySelectorAll('.card'));
     setTimeout(() => {
