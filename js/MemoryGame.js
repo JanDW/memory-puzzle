@@ -50,6 +50,7 @@ export class MemoryGame {
     this.audioController.init();
     this.generateBoard(this.board, emojis, this.boardSize);
     this.cards = Array.from(document.querySelectorAll('.card'));
+    this.matchedTotalUI.innerText = this.cardPairs.toString();
     setTimeout(() => {
       this.audioController.startMusic();
       this.countdown = this.startCountdown();
@@ -179,7 +180,7 @@ export class MemoryGame {
     if (this.canFlipCard(card)) {
       this.audioController.flip();
       this.totalClicks++;
-      this.clicksUI.innerText = this.totalClicks.toString();
+      this.clicksUI.innerText = Math.floor(this.totalClicks / 2).toString();
       card.classList.add('visible');
 
       if (this.cardToCheck) {
