@@ -46,14 +46,14 @@ export class MemoryGame {
     this.cardToCheck = null;
     this.matchedCards = 0;
     this.busy = true;
-    this.emptyBoardInDom();
+    this.#emptyBoardInDom();
     this.audioController.init();
-    this.generateBoard(this.board, emojis, this.boardSize);
+    this.#generateBoard(this.board, emojis, this.boardSize);
     this.cards = Array.from(document.querySelectorAll('.card'));
     this.matchedTotalUI.innerText = this.cardPairs.toString();
     setTimeout(() => {
       this.audioController.startMusic();
-      this.countdown = this.startCountdown();
+      this.countdown = this.#startCountdown();
       this.busy = false;
     }, 500);
   }
@@ -66,18 +66,18 @@ export class MemoryGame {
    * @param {number} boardSize
    */
 
-  generateBoard(domContainer, emojis, boardSize) {
+  #generateBoard(domContainer, emojis, boardSize) {
     _.setRootProperty('--board-size', boardSize.toString());
     const emojisAllShuffled = _.shuffleArray(emojis);
     const emojisUnique = emojisAllShuffled.slice(0, this.cardTotal / 2);
     const emojisPaired = _.duplicateArrayElements(emojisUnique);
     const emojisPairedShuffled = _.shuffleArray(emojisPaired);
-    this.generateBoardInDOM(domContainer, boardSize ** 2, emojisPairedShuffled);
+    this.#generateBoardInDOM(domContainer, boardSize ** 2, emojisPairedShuffled);
   }
 
   /** Remove any cards from the board */
 
-  emptyBoardInDom() {
+  #emptyBoardInDom() {
     while (this.board.firstChild) {
       this.board.removeChild(this.board.firstChild);
     }
@@ -89,7 +89,7 @@ export class MemoryGame {
    * @param {HTMLElement} card
    */
 
-  getCardType(card) {
+  #getCardType(card) {
     return card.firstChild.innerText;
   }
 
@@ -99,7 +99,7 @@ export class MemoryGame {
    * @param {HTMLElement} card
    */
 
-  canFlipCard(card) {
+  #canFlipCard(card) {
     return (
       !this.busy &&
       !card.classList.contains('visible') &&
@@ -109,17 +109,17 @@ export class MemoryGame {
 
   /** Start countdown */
 
-  startCountdown() {
+  #startCountdown() {
     return setInterval(() => {
       this.timeRemaining--;
       this.timer.innerText = this.timeRemaining.toString();
-      if (this.timeRemaining === 0) this.gameOver();
+      if (this.timeRemaining === 0) this.#gameOver();
     }, 1000);
   }
 
   /** Unable to complete game before countdown timer ran out */
 
-  gameOver() {
+  #gameOver() {
     this.busy = true;
     this.audioController.gameOver();
     clearInterval(this.countdown);
@@ -131,7 +131,7 @@ export class MemoryGame {
 
   /** Completed game within countdown timer. Congratulations. */
 
-  success() {
+  #success() {
     clearInterval(this.countdown);
     this.audioController.complete();
     startConfetti();
@@ -149,7 +149,7 @@ export class MemoryGame {
    * @param {Array} emojis
    */
 
-  generateBoardInDOM(board, cardTotal, emojis) {
+  #generateBoardInDOM(board, cardTotal, emojis) {
     let boardHTML = '';
     for (let i = 0; i < cardTotal; i++) {
       boardHTML += `<button type="button" class="card"><div class="card__front"><span>${emojis[i]}</span></div><div class="card__back"></div></button>`;
@@ -163,7 +163,7 @@ export class MemoryGame {
    * @param {Event} event
    */
 
-  getClickedCardButton(event) {
+  #getClickedCardButton(event) {
     let eventBubblePath = event.composedPath();
     let button = eventBubblePath.find((el) => el.tagName === 'BUTTON');
     return button;
@@ -176,15 +176,15 @@ export class MemoryGame {
    */
 
   flipCard(e) {
-    const card = this.getClickedCardButton(e);
-    if (this.canFlipCard(card)) {
+    const card = this.#getClickedCardButton(e);
+    if (this.#canFlipCard(card)) {
       this.audioController.flip();
       this.totalClicks++;
       this.clicksUI.innerText = Math.floor(this.totalClicks / 2).toString();
       card.classList.add('visible');
 
       if (this.cardToCheck) {
-        this.checkForCardMatch(card);
+        this.#checkForCardMatch(card);
       } else {
         this.cardToCheck = card;
       }
@@ -197,10 +197,10 @@ export class MemoryGame {
    * @param {HTMLElement} card
    */
 
-  checkForCardMatch(card) {
-    if (this.getCardType(card) === this.getCardType(this.cardToCheck))
-      this.cardMatch(card, this.cardToCheck);
-    else this.cardMismatch(card, this.cardToCheck);
+  #checkForCardMatch(card) {
+    if (this.#getCardType(card) === this.#getCardType(this.cardToCheck))
+      this.#cardMatch(card, this.cardToCheck);
+    else this.#cardMismatch(card, this.cardToCheck);
 
     this.cardToCheck = null;
   }
@@ -212,13 +212,13 @@ export class MemoryGame {
    * @param {HTMLElement} card2
    */
 
-  cardMatch(card1, card2) {
+  #cardMatch(card1, card2) {
     this.matchedCards++;
     card1.classList.add('matched');
     card2.classList.add('matched');
     this.matchedUI.innerText = this.matchedCards.toString();
     this.audioController.match();
-    if (this.matchedCards === this.cardPairs) this.success();
+    if (this.matchedCards === this.cardPairs) this.#success();
   }
 
   /**
@@ -228,7 +228,7 @@ export class MemoryGame {
    * @param {HTMLElement} card2
    */
 
-  cardMismatch(card1, card2) {
+  #cardMismatch(card1, card2) {
     this.busy = true;
     setTimeout(() => {
       card1.classList.remove('visible');
