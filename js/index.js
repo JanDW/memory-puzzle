@@ -14,7 +14,7 @@ function ready() {
   const soundToggle = document.querySelector('#sound');
   /** @type {HTMLButtonElement} */
   const musicToggle = document.querySelector('#music');
-  const game = new MemoryGame(60, board, 4, soundToggle, musicToggle);
+  const game = new MemoryGame(180, board, 4, soundToggle, musicToggle);
   const overlays = Array.from(document.querySelectorAll('.overlay'));
 
   board.addEventListener('click', (e) => {
