@@ -5,8 +5,39 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
+    <script>
+      document.addEventListener('touchstart', preventZoom, { passive: false });
+
+      function preventZoom(e) {
+        if (e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }
+
+      // Prevent pinch zoom on mobile
+      document.addEventListener(
+        'touchmove',
+        function (event) {
+          if (event.scale !== 1) {
+            event.preventDefault();
+          }
+        },
+        { passive: false }
+      );
+
+      // Prevent Ctrl+wheel zoom on desktop
+      document.addEventListener(
+        'wheel',
+        function (event) {
+          if (event.ctrlKey) {
+            event.preventDefault();
+          }
+        },
+        { passive: false }
+      );
+    </script>
     <title>Memory puzzle</title>
     <script src="js/index.js" type="module" defer></script>
     <link rel="stylesheet" href="styles.css" />
