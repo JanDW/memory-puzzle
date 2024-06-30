@@ -120,6 +120,9 @@ main {
   top: 0;
 
   transform: rotateY(180deg);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 
   width: 100%;
